@@ -6,6 +6,9 @@ const MongoClient = require("mongodb").MongoClient;
 app.set("view engine", "ejs");
 require("dotenv").config();
 
+//미들웨어
+app.use("/public", express.static("public"));
+
 var db;
 MongoClient.connect(process.env.MongoDB, (err, client) => {
   if (err) return console.log(err);
@@ -17,11 +20,11 @@ MongoClient.connect(process.env.MongoDB, (err, client) => {
 });
 
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
+  res.render("index.ejs");
 });
 
 app.get("/write", (req, res) => {
-  res.sendFile(__dirname + "/write.html");
+  res.render("write.ejs");
 });
 
 app.post("/add", (req, res) => {
