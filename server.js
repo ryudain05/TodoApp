@@ -11,7 +11,7 @@ MongoClient.connect(process.env.MongoDB, (err, client) => {
   if (err) return console.log(err);
   db = client.db("todoapp");
 
-  app.listen(process.env.POST, () => {
+  app.listen(3000, () => {
     console.log("3000 sever start");
   });
 });
@@ -64,4 +64,14 @@ app.delete("/delete", (req, res) => {
     console.log("삭제완료");
     res.status(200).send({ message: "성공했습니다 ! " });
   });
+});
+
+app.get("/detail/:id", (req, res) => {
+  db.collection("post").findOne(
+    { _id: parseInt(req.params.id) },
+    (err, result) => {
+      console.log(result);
+      res.render("detail.ejs", { data: result });
+    }
+  );
 });
