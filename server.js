@@ -3,6 +3,8 @@ const app = express();
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 const MongoClient = require("mongodb").MongoClient;
+const methodOverride = require("method-override");
+app.use(methodOverride("_method"));
 app.set("view engine", "ejs");
 require("dotenv").config();
 
@@ -75,6 +77,16 @@ app.get("/detail/:id", (req, res) => {
     (err, result) => {
       console.log(result);
       res.render("detail.ejs", { data: result });
+    }
+  );
+});
+
+app.get("/edit/:id", (req, res) => {
+  db.collection("post").findOne(
+    { _id: parseInt(req.params.id) },
+    (err, result) => {
+      console.log(result);
+      res.render("edit.ejs", { result: result });
     }
   );
 });
