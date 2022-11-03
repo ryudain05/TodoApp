@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 const MongoClient = require("mongodb").MongoClient;
 const methodOverride = require("method-override");
@@ -90,3 +91,65 @@ app.get("/edit/:id", (req, res) => {
     }
   );
 });
+
+app.put("/edit", (req, res) => {
+  //$set = 업데이트 해주세요. 없으면 추가해주세요
+  db.collection("post").updateOne(
+    { _id: parseInt(req.body.id) },
+    { $set: { 제목: req.body.title, 날짜: req.body.date } },
+    (err, result) => {
+      console.log(result.date);
+      res.redirect("/list");
+    }
+  );
+});
+
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const session = require("express-session");
+
+//미들웨어
+app.use(
+  session({ secret: "made in dain", resave: true, saveUninitialized: false })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.get("/login", (req, res) => {
+  res.render("login.ejs");
+});
+
+app.post(
+  "/login",
+  passport.authenticate("local", {
+    failureRedirect: "/fail",
+  }),
+  (req, res) => {
+    res.redirect("/");
+  }
+);
+
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: "id",
+      passwordField: "pw",
+      session: true,
+      passReqToCallback: false,
+    },
+    (id, pw, done) => {
+      //console.log(id, pw);
+      db.collection("login").findOne({ id: id }, function (err, result) {
+        if (err) return done(err);
+
+        if (!result)
+          return done(null, false, { message: "존재하지않는 아이디요" });
+        if (pw == result.pw) {
+          return done(null, result);
+        } else {
+          return done(null, false, { message: "비번틀렸어요" });
+        }
+      });
+    }
+  )
+);
