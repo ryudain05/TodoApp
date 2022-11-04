@@ -127,16 +127,15 @@ app.post(
 
 //미들웨어 추가
 app.get("/mypage", login, (req, res) => {
-  res.render("mypage.ejs");
+  console.log(req.user);
+  res.render("mypage.ejs", { user: req.user });
 });
 
 function login(req, res, next) {
-  if (res.user) {
-    console.log(res.user);
-    //통과
+  if (req.user) {
     next();
   } else {
-    res.send("로그인을 진행 해 주세요.");
+    res.render("login.ejs");
   }
 }
 
@@ -149,16 +148,15 @@ passport.use(
       passReqToCallback: false,
     },
     (id, pw, done) => {
-      //console.log(id, pw);
       db.collection("login").findOne({ id: id }, (err, result) => {
         if (err) return done(err);
 
         if (!result)
-          return done(null, false, { message: "존재하지않는 아이디요" });
+          return done(null, false, { message: "존재하지않는 아이디입니다." });
         if (pw == result.pw) {
           return done(null, result);
         } else {
-          return done(null, false, { message: "비번틀렸어요" });
+          return done(null, false, { message: "비밀번호가 맞지 않습니다." });
         }
       });
     }
@@ -169,5 +167,7 @@ passport.serializeUser((user, done) => {
   done(null, user.id);
 });
 passport.deserializeUser((id, done) => {
-  done(null, {});
+  db.collection("login").findOne({ id: id }, (err, result) => {
+    done(null, result);
+  });
 });
