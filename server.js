@@ -109,9 +109,7 @@ const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
 
 //미들웨어
-app.use(
-  session({ secret: "made in dain", resave: true, saveUninitialized: false })
-);
+app.use(session({ secret: "dain", resave: true, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -121,13 +119,26 @@ app.get("/login", (req, res) => {
 
 app.post(
   "/login",
-  passport.authenticate("local", {
-    failureRedirect: "/fail",
-  }),
+  passport.authenticate("local", { failureRedirect: "/fail" }),
   (req, res) => {
     res.redirect("/");
   }
 );
+
+//미들웨어 추가
+app.get("/mypage", login, (req, res) => {
+  res.render("mypage.ejs");
+});
+
+function login(req, res, next) {
+  if (res.user) {
+    console.log(res.user);
+    //통과
+    next();
+  } else {
+    res.send("로그인을 진행 해 주세요.");
+  }
+}
 
 passport.use(
   new LocalStrategy(
@@ -139,7 +150,7 @@ passport.use(
     },
     (id, pw, done) => {
       //console.log(id, pw);
-      db.collection("login").findOne({ id: id }, function (err, result) {
+      db.collection("login").findOne({ id: id }, (err, result) => {
         if (err) return done(err);
 
         if (!result)
@@ -153,3 +164,10 @@ passport.use(
     }
   )
 );
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+passport.deserializeUser((id, done) => {
+  done(null, {});
+});

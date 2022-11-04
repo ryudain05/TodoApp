@@ -8,6 +8,8 @@
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
 
+    <link rel="stylesheet" href="/public/main.css" />
+
     <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
@@ -21,42 +23,11 @@
   <body>
     <%- include('nav.html') %>
 
-    <h4 class="container mt-4"><strong>글 작성페이지</strong></h4>
-    <div class="container mt-3">
-      <form action="/edit" method="POST">
-        <div class="form-group">
-          <label>오늘의 할일</label>
-          <input
-            type="text"
-            value="<%= result.id %>"
-            name="id"
-            style="display: none"
-          />
-          <input
-            value="<%= result.제목 %>"
-            type="text"
-            class="form-control"
-            name="title"
-          />
-        </div>
-        <div class="form-group">
-          <label>날짜</label>
-          <input
-            value="<%= result.날짜 %>"
-            type="text"
-            class="form-control"
-            name="date"
-          />
-        </div>
-        <button type="submit" class="btn btn-outline-secondary">Submit</button>
-      </form>
-    </div>
-
+    <p>~~마이페이지입니다</p>
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
     <script
-      src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
       integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
       crossorigin="anonymous"
     ></script>
