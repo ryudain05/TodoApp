@@ -82,7 +82,19 @@
       integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
       crossorigin="anonymous"
     ></script>
+    <script>
+      //GET요청
+      $("#search").click(() => {
+        //input에 유저가 입력한값
+        var SearchInput = $("#search-input").val();
+        window.location.replace("/search?value=" + SearchInput);
+      });
 
+      var list = { name: "value" };
+      $.param(list);
+
+      $(form).serialize();
+    </script>
     <!-- Option 2: Separate Popper and Bootstrap JS -->
     <!--
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
