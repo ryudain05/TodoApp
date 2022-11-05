@@ -171,3 +171,12 @@ passport.deserializeUser((id, done) => {
     done(null, result);
   });
 });
+
+app.get("/search", (req, res) => {
+  console.log(req.query.value);
+  db.collection("post")
+    .find({ 제목: req.query.value })
+    .toArray((err, result) => {
+      res.render("search.ejs", { posts: result });
+    });
+});
