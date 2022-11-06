@@ -173,9 +173,27 @@ passport.deserializeUser((id, done) => {
 });
 
 app.get("/search", (req, res) => {
-  console.log(req.query.value);
+  var 검색조건 = [
+    {
+      $search: {
+        index: "titleSearch",
+        text: {
+          query: req.query.value,
+          path: "제목", // 제목날짜 둘다 찾고 싶으면 ['제목', '날짜']
+        },
+      },
+    },
+    //정렬
+    { $sort: { _id: 1 } },
+    //글 제한 10 개로
+    { $limit: 10 },
+    //검색결과에 필터주기 score 달라고하면 줌
+    //{ $project: { 제목: 1, _id: 0, score: { $meta: "searchScore" } } },
+  ];
+
   db.collection("post")
-    .find({ $text: { $search: req.query.value } })
+    //검색조건여러개가능
+    .aggregate(검색조건)
     .toArray((err, result) => {
       res.render("search.ejs", { posts: result });
     });
