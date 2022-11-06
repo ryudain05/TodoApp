@@ -22,16 +22,20 @@ MongoClient.connect(process.env.MongoDB, (err, client) => {
   });
 });
 
+//메인페이지
 app.get("/", (req, res) => {
   res.render("index.ejs");
 });
 
+//글쓰기
 app.get("/write", (req, res) => {
   res.render("write.ejs");
 });
 
+//글 추가
 app.post("/add", (req, res) => {
   res.send("전송완료");
+  //totalPost 변수에 담아서 사용
   db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
     console.log(result.totalPost);
     const totalPost = result.totalPost;
@@ -64,6 +68,7 @@ app.get("/list", (req, res) => {
 
 app.delete("/delete", (req, res) => {
   console.log(req.body);
+  //type 전환 유의하기
   req.body._id = parseInt(req.body._id);
 
   db.collection("post").deleteOne(req.body, (err, result) => {
@@ -72,16 +77,20 @@ app.delete("/delete", (req, res) => {
   });
 });
 
+//:id를 사용해서 파라미터 가져오기
 app.get("/detail/:id", (req, res) => {
   db.collection("post").findOne(
+    //파라미터값이 string 형변환시켜주기
     { _id: parseInt(req.params.id) },
     (err, result) => {
       console.log(result);
+      //결과값 data에 담기
       res.render("detail.ejs", { data: result });
     }
   );
 });
 
+//params 받아와서 ejs에 저장된 제목, 날짜 띄우기
 app.get("/edit/:id", (req, res) => {
   db.collection("post").findOne(
     { _id: parseInt(req.params.id) },
@@ -117,6 +126,7 @@ app.get("/login", (req, res) => {
   res.render("login.ejs");
 });
 
+//미들웨어를 통해 검증
 app.post(
   "/login",
   passport.authenticate("local", { failureRedirect: "/fail" }),
@@ -139,6 +149,7 @@ function login(req, res, next) {
   }
 }
 
+//미들웨어
 passport.use(
   new LocalStrategy(
     {
@@ -148,10 +159,12 @@ passport.use(
       passReqToCallback: false,
     },
     (id, pw, done) => {
+      //아이디, 비번 찾기
       db.collection("login").findOne({ id: id }, (err, result) => {
         if (err) return done(err);
 
         if (!result)
+          //done(서버에러, 성공시 사용자 DB데이터(실패면 false), 에러메시지)
           return done(null, false, { message: "존재하지않는 아이디입니다." });
         if (pw == result.pw) {
           return done(null, result);
@@ -163,9 +176,11 @@ passport.use(
   )
 );
 
+//id를 이용해서 세션을 저장
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
+//마이페이지 접속시 발동 (어떤 유저인지 해석)
 passport.deserializeUser((id, done) => {
   db.collection("login").findOne({ id: id }, (err, result) => {
     done(null, result);
