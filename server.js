@@ -32,31 +32,6 @@ app.get("/write", (req, res) => {
   res.render("write.ejs");
 });
 
-//글 추가
-app.post("/add", (req, res) => {
-  res.send("전송완료");
-  //totalPost 변수에 담아서 사용
-  db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
-    console.log(result.totalPost);
-    const totalPost = result.totalPost;
-
-    db.collection("post").insertOne(
-      { _id: totalPost + 1, 제목: req.body.title, 날짜: req.body.date },
-      (err, result) => {
-        console.log("저장완료");
-        //counter라는 콜렉션에 있는 totalPost 라는 항목도 1 증가시켜야함 (수정)
-        db.collection("counter").updateOne(
-          { name: "게시물갯수" },
-          { $inc: { totalPost: 1 } },
-          (err, result) => {
-            if (err) return console.log(err);
-          }
-        );
-      }
-    );
-  });
-});
-
 app.get("/list", (req, res) => {
   db.collection("post")
     .find()
@@ -64,17 +39,6 @@ app.get("/list", (req, res) => {
       console.log(result);
       res.render("list.ejs", { posts: result });
     });
-});
-
-app.delete("/delete", (req, res) => {
-  console.log(req.body);
-  //type 전환 유의하기
-  req.body._id = parseInt(req.body._id);
-
-  db.collection("post").deleteOne(req.body, (err, result) => {
-    console.log("삭제완료");
-    res.status(200).send({ message: "성공했습니다 ! " });
-  });
 });
 
 //:id를 사용해서 파라미터 가져오기
@@ -184,6 +148,60 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((id, done) => {
   db.collection("login").findOne({ id: id }, (err, result) => {
     done(null, result);
+  });
+});
+
+app.post("/register", (req, res) => {
+  db.collection("login").insertOne(
+    { id: req.body.id, pw: req.body.pw },
+    (err, result) => {
+      res.redirect("/");
+    }
+  );
+});
+
+//글 추가
+app.post("/add", (req, res) => {
+  res.send("전송완료");
+  //totalPost 변수에 담아서 사용
+  db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
+    console.log(result.totalPost);
+    const totalPost = result.totalPost;
+
+    var save = {
+      _id: totalPost + 1,
+      제목: req.body.title,
+      날짜: req.body.date,
+      작성자: req.user._id,
+    };
+    db.collection("post").insertOne(save, (err, result) => {
+      console.log("저장완료");
+      //counter라는 콜렉션에 있는 totalPost 라는 항목도 1 증가시켜야함 (수정)
+      db.collection("counter").updateOne(
+        { name: "게시물갯수" },
+        { $inc: { totalPost: 1 } },
+        (err, result) => {
+          if (err) return console.log(err);
+        }
+      );
+    });
+  });
+});
+
+//글 삭제
+app.delete("/delete", (req, res) => {
+  console.log(req.body);
+  //type 전환 유의하기
+  req.body._id = parseInt(req.body._id);
+
+  var deleteData = { _id: req.body._id, 작성자: req.user._id };
+
+  db.collection("post").deleteOne(deleteData, (err, result) => {
+    console.log("삭제완료");
+    if (err) {
+      console.log(err);
+    }
+    res.status(200).send({ message: "성공했습니다 ! " });
   });
 });
 
