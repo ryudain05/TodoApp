@@ -231,3 +231,7 @@ app.get("/search", (req, res) => {
       res.render("search.ejs", { posts: result });
     });
 });
+
+//shop파일 첨부, app.use(미들웨어) /경로로 이동하면 미들웨어 적용
+app.use("/shop", require("./routes/shop.js"));
+app.use("/board/sub", require("./routes/board.js"));
