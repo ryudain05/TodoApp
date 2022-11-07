@@ -235,3 +235,37 @@ app.get("/search", (req, res) => {
 //shop파일 첨부, app.use(미들웨어) /경로로 이동하면 미들웨어 적용
 app.use("/shop", require("./routes/shop.js"));
 app.use("/board/sub", require("./routes/board.js"));
+
+let multer = require("multer");
+var storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "./public/image");
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+  filefilter: (req, file, cb) => {
+    var ext = path.extname(file.originalname);
+    if (ext !== ".png" && ext !== ".jpg" && ext !== ".jpeg") {
+      return callback(new Error("PNG, JPG만 업로드하세요"));
+    }
+    callback(null, true);
+  },
+  limits: {
+    fileSize: 1024 * 1024,
+  },
+});
+
+var upload = multer({ storage: storage });
+
+app.get("/upload", (req, res) => {
+  res.render("upload.ejs");
+});
+
+app.post("/upload", upload.array("upload"), (req, res) => {
+  res.send("업로드가 되었습니다.");
+});
+
+app.get("/image/:imageName", (req, res) => {
+  res.sendFile(__dirname + "/public/image/" + req.params.imageName);
+});
