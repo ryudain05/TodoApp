@@ -5,6 +5,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 const MongoClient = require("mongodb").MongoClient;
 const methodOverride = require("method-override");
+const { ObjectId } = require("mongodb");
 app.use(methodOverride("_method"));
 app.set("view engine", "ejs");
 require("dotenv").config();
@@ -268,4 +269,27 @@ app.post("/upload", upload.array("upload"), (req, res) => {
 
 app.get("/image/:imageName", (req, res) => {
   res.sendFile(__dirname + "/public/image/" + req.params.imageName);
+});
+
+app.get("/chat", login, (req, res) => {
+  db.collection("chatroom")
+    .find({ member: req.user._id })
+    .toArray()
+    .then((result) => {
+      res.render("chat.ejs", { data: result });
+    });
+});
+
+app.post("/chatroom", login, (req, res) => {
+  var save = {
+    title: "채팅방",
+    member: [ObjectId(req.body.Tid), req.user._id],
+    date: new Date(),
+  };
+
+  db.collection("chatroom")
+    .insertOne(save)
+    .then((result) => {
+      res.send("채팅방 발행 성공");
+    });
 });
