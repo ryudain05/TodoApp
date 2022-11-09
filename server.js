@@ -293,3 +293,18 @@ app.post("/chatroom", login, (req, res) => {
       res.send("채팅방 발행 성공");
     });
 });
+
+app.post("/message", login, (req, res) => {
+  var save = {
+    parent: req.body.parent,
+    userid: req.user._id,
+    content: req.body.content,
+    date: new Date(),
+  };
+  db.collection("message")
+    .insertOne(save)
+    .then(() => {
+      console.log("성공");
+      res.send("DB저장 성공");
+    });
+});

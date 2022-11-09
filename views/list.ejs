@@ -98,12 +98,27 @@
       integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
       crossorigin="anonymous"
     ></script>
+
     <script>
-      //GET요청
-      $("#search").click(() => {
-        //input에 유저가 입력한값
-        var SearchInput = $("#search-input").val();
-        window.location.replace("/search?value=" + SearchInput);
+      $("#send").click(function () {
+        var msg = $("#chat-input").val(); //1, 2
+        var save = {
+          parent: C_id,
+          content: msg,
+        };
+
+        //3
+        $.post("/message", save).then((a) => {
+          console.log(a);
+        });
+      });
+
+      //4
+      var C_id;
+
+      $(".list-group-item").click(function () {
+        $(this).css("background-color", "#eee");
+        C_id = $(this).attr("data-id");
       });
     </script>
     <!-- Option 2: Separate Popper and Bootstrap JS -->
