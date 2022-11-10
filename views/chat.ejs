@@ -56,23 +56,25 @@
         
         </div> 
 
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script> 
     <script>
-      $('.list-group-item').click(()=>{
-        var click_id = this.dataset.id;
-      })
-      $("#send").click(()=>{
+      $("#send").click(function(){
         var msg = $('#chat-input').val()
         var data = {
           parent : click_id,
           content : msg,
         }
-        $.post('/message', data).then((e)=>{
-          console.log("전송성공")
-        })
-      })
+        $.post('/message', data).then(()=>{
+          console.log("전송성공");
+        });
+      });
+
       var click_id;
 
+      $('.list-group-item').click(function(){
+         $(this).css('background-color', '#eee');
+         click_id = $(this).attr('data-id');
+      });
   </script>  
   </body>
 </html>
