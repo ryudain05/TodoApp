@@ -308,3 +308,16 @@ app.post("/message", login, (req, res) => {
       res.send("DB저장 성공");
     });
 });
+
+app.get("/message/:id", login, (req, res) => {
+  res.writeHead(200, {
+    Connection: "keep-alive",
+    "Content-Type": "text/event-stream",
+    "Cache-Control": "no-cache",
+  });
+  db.collection("message").find({ parent: req.params.id }).toArray({}),
+    (err, result) => {
+      res.write("event : test\n");
+      res.write("data :" + JSON.stringify(result) + "\n\n");
+    };
+});

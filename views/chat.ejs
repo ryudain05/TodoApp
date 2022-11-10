@@ -70,10 +70,16 @@
       });
 
       var click_id;
+      var eventSource;
 
       $('.list-group-item').click(function(){
          $(this).css('background-color', '#eee');
          click_id = $(this).attr('data-id');
+
+         eventSource =  new EventSource('/message/' + click_id)
+         eventSource.addEventListener('test',function(e){
+          console.log(JSON.parse(e.data));
+         });
       });
   </script>  
   </body>
