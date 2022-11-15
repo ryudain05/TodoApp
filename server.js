@@ -280,6 +280,7 @@ app.get("/chat", login, (req, res) => {
     });
 });
 
+//채팅방 개설
 app.post("/chatroom", login, (req, res) => {
   var save = {
     title: "채팅방",
@@ -289,11 +290,12 @@ app.post("/chatroom", login, (req, res) => {
 
   db.collection("chatroom")
     .insertOne(save)
-    .then((result) => {
+    .then(function (result) {
       res.send("채팅방 발행 성공");
     });
 });
 
+//메시지 발행
 app.post("/message", login, (req, res) => {
   var save = {
     parent: req.body.parent,
@@ -315,9 +317,20 @@ app.get("/message/:id", login, (req, res) => {
     "Content-Type": "text/event-stream",
     "Cache-Control": "no-cache",
   });
-  db.collection("message").find({ parent: req.params.id }).toArray({}),
-    (err, result) => {
-      res.write("event : test\n");
-      res.write("data :" + JSON.stringify(result) + "\n\n");
-    };
+  db.collection("message")
+    .find({ parent: req.params.id })
+    .toArray()
+    .then((result) => {
+      res.write("event: test\n");
+      res.write(`data: ${JSON.stringify(result)}\n\n`);
+    });
+
+  //DB 실시간 업데이트
+  const pipeline = [{ $match: { "fullDocument.parent": req.params.id } }];
+  const changeStream = db.collection("message").watch(pipeline);
+  //일종의 이벤트리스너
+  changeStream.on("change", (result) => {
+    var plusDoc = [result.fullDocument];
+    res.write(`data: ${JSON.stringify(plusDoc)}\n\n`);
+  });
 });
