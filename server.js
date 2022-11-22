@@ -1,5 +1,10 @@
 const express = require("express");
 const app = express();
+
+const http = require("http").createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(http);
+
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -18,7 +23,7 @@ MongoClient.connect(process.env.MongoDB, (err, client) => {
   if (err) return console.log(err);
   db = client.db("todoapp");
 
-  app.listen(3000, () => {
+  http.listen(3000, () => {
     console.log("3000 sever start");
   });
 });
@@ -333,4 +338,9 @@ app.get("/message/:id", login, (req, res) => {
     var plusDoc = [result.fullDocument];
     res.write(`data: ${JSON.stringify(plusDoc)}\n\n`);
   });
+});
+
+//socket채팅방 만들기
+app.get("/socket", (req, res) => {
+  res.render("socket.ejs");
 });
