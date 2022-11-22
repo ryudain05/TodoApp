@@ -22,8 +22,15 @@
   </head>
   <body>
     <%- include('nav.html') %>
-    <div>채팅방</div>
-
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.3/socket.io.js"></script>
+    <div>채팅방</div>
+    <button id="send">서버에 메시지 보내기</button>
+    <script>
+      var socket = io();
+      $("#send").click(function () {
+        socket.emit("user-send", "안녕하세욧");
+      });
+    </script>
   </body>
 </html>

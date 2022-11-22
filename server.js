@@ -344,3 +344,11 @@ app.get("/message/:id", login, (req, res) => {
 app.get("/socket", (req, res) => {
   res.render("socket.ejs");
 });
+
+io.on("connection", (socket) => {
+  console.log("유저접속성공");
+
+  socket.on("user-send", function (data) {
+    console.log(data);
+  });
+});
