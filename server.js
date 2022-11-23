@@ -350,5 +350,7 @@ io.on("connection", (socket) => {
 
   socket.on("user-send", function (data) {
     console.log(data);
+    //socket id 유저 정보 가져와서 보여줌
+    io.to(socket.id).emit("broadcast", data);
   });
 });

@@ -25,11 +25,17 @@
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.3/socket.io.js"></script>
     <div>채팅방</div>
+    <input id="input1" />
+    <div id="content"></div>
     <button id="send">서버에 메시지 보내기</button>
     <script>
       var socket = io();
       $("#send").click(function () {
-        socket.emit("user-send", "안녕하세욧");
+        socket.emit("user-send", $("#input1").val());
+      });
+      //socket사용시 이벤트 리스너가 필요함
+      socket.on("broadcast", function (data) {
+        $("#content").append("<div>" + data + "</div>");
       });
     </script>
   </body>
