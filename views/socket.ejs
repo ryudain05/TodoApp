@@ -28,8 +28,20 @@
     <input id="input1" />
     <div id="content"></div>
     <button id="send">서버에 메시지 보내기</button>
+    <button id="room1">다인 채팅방 입장</button>
+    <button id="room1-send">다인 채팅방 메시지 보내기</button>
     <script>
       var socket = io();
+
+      //socket은 get, post 대체 가능함
+      $("#room1-send").click(function () {
+        socket.emit("room1-send", $("#input1").val());
+      });
+
+      $("#room1").click(function () {
+        socket.emit("joinroom", "채팅방입장");
+      });
+
       $("#send").click(function () {
         socket.emit("user-send", $("#input1").val());
       });

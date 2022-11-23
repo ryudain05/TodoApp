@@ -348,6 +348,15 @@ app.get("/socket", (req, res) => {
 io.on("connection", (socket) => {
   console.log("유저접속성공");
 
+  socket.on("joinroom", function (data) {
+    //채팅방개설
+    socket.join("room1");
+  });
+
+  socket.on("room1-send", function (data) {
+    io.to("room1").emit("broadcast", data);
+  });
+
   socket.on("user-send", function (data) {
     console.log(data);
     //socket id 유저 정보 가져와서 보여줌
