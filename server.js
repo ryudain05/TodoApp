@@ -115,7 +115,9 @@ function login(req, res, next) {
   if (req.user) {
     next();
   } else {
-    res.render("login.ejs");
+    res.writeHead(200, { "Content-Type": "text/html;charset=UTF-8" });
+    res.write("<script>alert('로그인이 필요합니다 !')</script>");
+    res.write('<script>window.location="/login"</script>');
   }
 }
 
