@@ -4,6 +4,13 @@
 // Linting: ESLint
 // Type checking: TypeScript
 
+function Studnet(name) {
+  this.name = name
+}
+
+const me = new Studnet('dain')
+console.log(me)
+
 const express = require('express')
 const app = express()
 
